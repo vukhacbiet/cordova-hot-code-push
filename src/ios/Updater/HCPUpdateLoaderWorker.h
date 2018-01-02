@@ -9,12 +9,16 @@
 #import "HCPWorker.h"
 #import "HCPUpdateRequest.h"
 
+@protocol HCPUpdateLoaderWorkerDelegate
+- (void)callBackProgress:(NSDictionary *)dic;
+@end
 /**
  *  Worker, that implements update download logic.
  *  During the download process events are dispatched to notify the subscribers about the progress.
  *  @see HCPWorker
  */
 @interface HCPUpdateLoaderWorker : NSObject<HCPWorker>
+@property (weak, nonatomic) id delegate;
 
 /**
  *  Constructor.

@@ -14,7 +14,7 @@
     NSURL *_contentURL;
     NSURL *_folderURL;
     NSDictionary *_headers;
-    
+    NSMutableDictionary *_progressDic;
     NSURLSession *_session;
     HCPFileDownloadCompletionBlock _complitionHandler;
     NSUInteger _downloadCounter;
@@ -35,9 +35,14 @@ static NSUInteger const TIMEOUT = 300;
         _contentURL = contentURL;
         _folderURL = folderURL;
         _headers = headers;
+        _progressDic = [self getProgressDic];
     }
-    
     return self;
+}
+
+- (NSMutableDictionary *)getProgressDic {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"0",@"progress",@"0",@"currentNum",@"0",@"totalNum", nil];
+    return dic;
 }
 
 - (NSURLSession *)sessionWithHeaders:(NSDictionary *)headers {
@@ -64,7 +69,7 @@ static NSUInteger const TIMEOUT = 300;
 
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error {
     if (error && _complitionHandler) {
-        _complitionHandler(error);
+        _complitionHandler(error, nil);
         _session = nil;
     }
 }
@@ -74,7 +79,7 @@ static NSUInteger const TIMEOUT = 300;
     if (![self moveLoadedFile:location forFile:_filesList[_downloadCounter] toFolder:_folderURL error:&error]) {
         [_session invalidateAndCancel];
         _session = nil;
-        _complitionHandler(error);
+        _complitionHandler(error, nil);
         return;
     }
     
@@ -82,11 +87,24 @@ static NSUInteger const TIMEOUT = 300;
     if (_downloadCounter >= _filesList.count) {
         [_session finishTasksAndInvalidate];
         _session = nil;
-        _complitionHandler(nil);
+        [self updateProgress];
+        _complitionHandler(nil, _progressDic);
         return;
+    } else{
+        [self updateProgress];
+        _complitionHandler(nil, _progressDic);
     }
     
     [self launchDownloadTaskForFile:_filesList[_downloadCounter]];
+}
+
+- (void)updateProgress {
+    if (nil != _progressDic) {
+        float progress = (float)_downloadCounter / _filesList.count;
+        [_progressDic setValue:[NSString stringWithFormat:@"%lu", _downloadCounter] forKey:@"currentNum"];
+        [_progressDic setValue:[NSString stringWithFormat:@"%lu", _filesList.count] forKey:@"totalNum"];
+        [_progressDic setValue:[NSString stringWithFormat:@"%.2f", progress] forKey:@"progress"];
+    }
 }
 
 - (void)launchDownloadTaskForFile:(HCPManifestFile *)file {

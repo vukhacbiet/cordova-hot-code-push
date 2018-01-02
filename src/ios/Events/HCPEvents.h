@@ -11,6 +11,7 @@
  *  Event is dispatched when some error has happened during the update download.
  */
 extern NSString *const kHCPUpdateDownloadErrorEvent;
+extern NSString *const KHCPUpdateDownLoadSuccessEvent;
 
 /**
  *  Event is dispathed when there is nothing new to download from the server. 

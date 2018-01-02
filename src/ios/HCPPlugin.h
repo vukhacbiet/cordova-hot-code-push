@@ -7,11 +7,12 @@
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDV.h>
 #import "HCPFetchUpdateOptions.h"
+#import "HCPUpdateLoader.h"
 
 /**
  *  Plugin main class
  */
-@interface HCPPlugin : CDVPlugin
+@interface HCPPlugin : CDVPlugin<HCPUpdateLoaderDelegate>
 
 #pragma mark Properties
 

@@ -1,5 +1,10 @@
 # Cordova Hot Code Push Plugin
 
+```
+Fork from https://github.com/nordnet/cordova-hot-code-push
+Add download progress
+```
+
 This plugin provides functionality to perform automatic updates of the web based content in your application. Basically, everything that is stored in `www` folder of your Cordova project can be updated using this plugin.
 
 When you publish your application on the store - you pack in it all your web content: html files, JavaScript code, images and so on. There are two ways how you can update it:
