@@ -152,6 +152,7 @@
     <source-file src="src/android/src/com/nordnetab/chcp/main/events/NothingToUpdateEvent.java" target-dir="src/com/nordnetab/chcp/main/events"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/events/PluginEventImpl.java" target-dir="src/com/nordnetab/chcp/main/events"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/events/UpdateDownloadErrorEvent.java" target-dir="src/com/nordnetab/chcp/main/events"/>
+    <source-file src="src/android/src/com/nordnetab/chcp/main/events/UpdateDownloadSuccessEvent.java" target-dir="src/com/nordnetab/chcp/main/events"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/events/UpdateInstallationErrorEvent.java" target-dir="src/com/nordnetab/chcp/main/events"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/events/UpdateInstalledEvent.java" target-dir="src/com/nordnetab/chcp/main/events"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/events/UpdateIsReadyToInstallEvent.java" target-dir="src/com/nordnetab/chcp/main/events"/>
@@ -162,6 +163,7 @@
     <source-file src="src/android/src/com/nordnetab/chcp/main/network/FileDownloader.java" target-dir="src/com/nordnetab/chcp/main/network"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/network/JsonDownloader.java" target-dir="src/com/nordnetab/chcp/main/network"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/network/DownloadResult.java" target-dir="src/com/nordnetab/chcp/main/network"/>
+    <source-file src="src/android/src/com/nordnetab/chcp/main/network/DownloadProgressListener.java" target-dir="src/com/nordnetab/chcp/main/network"/>
     <!-- sources for package: com.nordnetab.chcp.storage -->
     <source-file src="src/android/src/com/nordnetab/chcp/main/storage/ApplicationConfigStorage.java" target-dir="src/com/nordnetab/chcp/main/storage"/>
     <source-file src="src/android/src/com/nordnetab/chcp/main/storage/ContentManifestStorage.java" target-dir="src/com/nordnetab/chcp/main/storage"/>
