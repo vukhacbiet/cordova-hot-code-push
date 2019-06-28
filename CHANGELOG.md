@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.5.4 (2018-01-02)
+**Function**
+
+- Add download progress
+
 ## 1.5.3 (2016-05-27)
 
 **Bug fixes:**

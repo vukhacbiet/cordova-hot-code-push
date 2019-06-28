@@ -1,6 +1,11 @@
 
 # Cordova Hot Code Push Plugin
 
+```
+Fork from https://github.com/nordnet/cordova-hot-code-push
+Add download progress
+```
+
 This plugin provides functionality to perform automatic updates of the web based content in your application. Basically, everything that is stored in `www` folder of your Cordova project can be updated using this plugin.
 
 When you publish your application on the store - you pack in it all your web content: html files, JavaScript code, images and so on. There are two ways how you can update it:
@@ -112,3 +117,31 @@ For production build do not forget to add the following to your `config.xml` fil
 All documentation can be found in details in our [Wiki on GitHub](https://github.com/nordnet/cordova-hot-code-push/wiki).
 
 If you have some questions/problems/suggestions - don't hesitate to post a [thread](https://github.com/nordnet/cordova-hot-code-push/issues). If it's an actual issue - please, follow [this guide](https://github.com/nordnet/cordova-hot-code-push/wiki/Issue-creation-guide) on how to do that properly.
+
+### Progress
+
+Include update file numbers and current download number.
+
+```javascript
+$scope.checkUpdate = function () {
+      try {
+        chcp.fetchUpdate(updateCallback);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+function updateCallback(error, data) {
+	  // data {totalNum: "5", progress: "0.2", currentNum: "1"}
+      if (error) {
+        // 处理错误
+        handleHotPushCode(error.code);
+        return;
+      }
+      // 进度
+      var progress = parseFloat(data.progress);
+      if (progress == 1.0) {
+        installUpdate();
+      }
+    }
+
+```

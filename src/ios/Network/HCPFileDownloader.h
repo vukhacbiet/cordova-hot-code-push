@@ -11,7 +11,7 @@
  *
  *  @param error holds information about occured error; <code>nil</code> if everything is fine
  */
-typedef void (^HCPFileDownloadCompletionBlock)(NSError *error);
+typedef void (^HCPFileDownloadCompletionBlock)(NSError *error, NSDictionary *dic);
 
 /**
  *  Helper class to download files from the server.

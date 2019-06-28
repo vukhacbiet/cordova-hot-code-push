@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,12 @@ import java.util.Map;
  * Helper class to download files.
  */
 public class FileDownloader {
+
+    private DownloadProgressListener downloadProgressListener;
+
+    public void setDownloadProgressListener(DownloadProgressListener downloadProgressListener) {
+        this.downloadProgressListener = downloadProgressListener;
+    }
 
     /**
      * Download list of files.
@@ -41,15 +46,49 @@ public class FileDownloader {
      * @throws Exception
      * @see ManifestFile
      */
-    public static void downloadFiles(final String downloadFolder,
-                                     final String contentFolderUrl,
-                                     final List<ManifestFile> files,
-                                     final Map<String, String> requestHeaders) throws Exception {
-        for (ManifestFile file : files) {
+    public void downloadFiles(String downloadFolder,
+                              String contentFolderUrl,
+                              List<ManifestFile> files,
+                              Map<String, String> requestHeaders) throws Exception {
+//        for (ManifestFile file : files) {
+//            String fileUrl = URLUtility.construct(contentFolderUrl, file.name);
+//            String filePath = Paths.get(downloadFolder, file.name);
+//            download(fileUrl, filePath, file.hash, requestHeaders);
+//        }
+        downloadOneByOne(files, contentFolderUrl, downloadFolder, requestHeaders, 0);
+    }
+
+    /**
+     * 递归下载文件
+     *
+     * @param files
+     * @param contentFolderUrl
+     * @param downloadFolder
+     * @param requestHeaders
+     * @param index
+     */
+    public void downloadOneByOne(List<ManifestFile> files,
+                                 String contentFolderUrl,
+                                 String downloadFolder,
+                                 Map<String, String> requestHeaders,
+                                 int index) {
+        if (index >= 0 && index < files.size()) {
+            ManifestFile file = files.get(index);
             String fileUrl = URLUtility.construct(contentFolderUrl, file.name);
             String filePath = Paths.get(downloadFolder, file.name);
-            download(fileUrl, filePath, file.hash, requestHeaders);
+            try {
+                download(fileUrl, filePath, file.hash, requestHeaders);
+                if (null != downloadProgressListener) {
+                    index++;
+                    float progress = (float) (index) / files.size();
+                    downloadProgressListener.onDownloadProgress((float) (Math.round(progress * 100)) / 100, index, files.size());
+                    downloadOneByOne(files, contentFolderUrl, downloadFolder, requestHeaders, index);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     /**
@@ -57,13 +96,12 @@ public class FileDownloader {
      *
      * @param urlFrom  url to download from
      * @param filePath where to save file
-     * @param checkSum checksum of the file
      * @throws IOException
      */
-    public static void download(final String urlFrom,
-                                final String filePath,
-                                final String checkSum,
-                                final Map<String, String> requestHeaders) throws Exception {
+    public void download(String urlFrom,
+                         String filePath,
+                         String checkSum,
+                         Map<String, String> requestHeaders) throws Exception {
         Log.d("CHCP", "Loading file: " + urlFrom);
         final MD5 md5 = new MD5();
 

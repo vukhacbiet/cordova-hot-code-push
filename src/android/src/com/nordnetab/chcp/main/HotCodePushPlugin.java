@@ -17,6 +17,7 @@ import com.nordnetab.chcp.main.events.BeforeInstallEvent;
 import com.nordnetab.chcp.main.events.NothingToInstallEvent;
 import com.nordnetab.chcp.main.events.NothingToUpdateEvent;
 import com.nordnetab.chcp.main.events.UpdateDownloadErrorEvent;
+import com.nordnetab.chcp.main.events.UpdateDownloadSuccessEvent;
 import com.nordnetab.chcp.main.events.UpdateInstallationErrorEvent;
 import com.nordnetab.chcp.main.events.UpdateInstalledEvent;
 import com.nordnetab.chcp.main.events.UpdateIsReadyToInstallEvent;
@@ -25,6 +26,7 @@ import com.nordnetab.chcp.main.js.PluginResultHelper;
 import com.nordnetab.chcp.main.model.ChcpError;
 import com.nordnetab.chcp.main.model.PluginFilesStructure;
 import com.nordnetab.chcp.main.model.UpdateTime;
+import com.nordnetab.chcp.main.network.DownloadProgressListener;
 import com.nordnetab.chcp.main.storage.ApplicationConfigStorage;
 import com.nordnetab.chcp.main.storage.IObjectFileStorage;
 import com.nordnetab.chcp.main.storage.IObjectPreferenceStorage;
@@ -476,7 +478,7 @@ public class HotCodePushPlugin extends CordovaPlugin {
      * @param jsCallback callback where to send the result;
      *                   used, when update is requested manually from JavaScript
      */
-    private void fetchUpdate(CallbackContext jsCallback, FetchUpdateOptions fetchOptions) {
+    private void fetchUpdate(final CallbackContext jsCallback, FetchUpdateOptions fetchOptions) {
         if (!isPluginReadyForWork) {
             return;
         }
@@ -501,15 +503,36 @@ public class HotCodePushPlugin extends CordovaPlugin {
                 .setRequestHeaders(requestHeaders)
                 .build();
 
-        final ChcpError error = UpdatesLoader.downloadUpdate(request);
-        if (error != ChcpError.NONE) {
+        final ChcpError error = UpdatesLoader.downloadUpdate(request, new DownloadProgressListener() {
+            @Override
+            public void onDownloadProgress(final float progress, final int currentNum, final int totalNum) {
+                cordova.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (jsCallback != null) {
+                            Map<String, Object> data = new HashMap<String, Object>();
+                            data.put("progress", progress);
+                            data.put("currentNum", currentNum);
+                            data.put("totalNum", totalNum);
+                            PluginResult successResult = PluginResultHelper.createPluginResult(UpdateDownloadSuccessEvent.EVENT_NAME, data, null);
+                            successResult.setKeepCallback(true);
+                            jsCallback.sendPluginResult(successResult);
+                        }
+                    }
+                });
+
+            }
+        });
+        // 回传进度信息
+        if (error == ChcpError.NONE) {
+
+        } else {
             if (jsCallback != null) {
                 PluginResult errorResult = PluginResultHelper.createPluginResult(UpdateDownloadErrorEvent.EVENT_NAME, null, error);
                 jsCallback.sendPluginResult(errorResult);
             }
             return;
         }
-
         if (jsCallback != null) {
             downloadJsCallback = jsCallback;
         }
