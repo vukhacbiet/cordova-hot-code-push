@@ -14,6 +14,7 @@ var context;
 var projectRoot;
 var projectName;
 var iosPlatformPath;
+const xcode = require('xcode');
 
 module.exports = {
   setWKWebViewEngineMacro: setWKWebViewEngineMacro
@@ -99,7 +100,7 @@ function loadProjectFile_cordova_5_and_6() {
 
 function loadProjectFile_cordova_7_and_above() {
   var pbxPath = path.join(iosPlatformPath, projectName + '.xcodeproj', 'project.pbxproj');
-  var xcodeproj = context.requireCordovaModule('xcode').project(pbxPath);
+  var xcodeproj = xcode.project(pbxPath);
   xcodeproj.parseSync();
 
   var saveProj = function() {
